@@ -59,7 +59,7 @@
 
 #ranks
 {
-    margin-top: -840px;
+    margin-top: -870px;
     margin-right: 0%;
     opacity: 0;
     z-index: -10000;
@@ -103,9 +103,9 @@
     justify-content: center;
     align-items: center;
 
-    width: 500px;
+    width: 300px;
     height: 400px;
-    margin-top: 16%;
+    margin-top: 22%;
     font-family: 'Bungee', cursive;
     font-size: 5vh;
     color: gold;

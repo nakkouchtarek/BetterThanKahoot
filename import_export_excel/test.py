@@ -9,7 +9,7 @@ mydb = mysql.connector.connect(
   password=""
 )
 
-commands = ["import","export"]
+commands = ["import","export","test"]
 
 mycursor = mydb.cursor()
 
@@ -20,7 +20,7 @@ def leave():
     exit(0)
 
 def insert_question(content,a,b,c,d,answer,category):
-    mycursor.execute(f"INSERT INTO `test`(`content`, `a`, `b`, `c`, `d`, `answer`, `category`) VALUES ('{str(content)}','{str(a)}','{str(b)}','{str(c)}','{str(d)}','{str(answer)}','{str(category)}');")
+    mycursor.execute(f"INSERT INTO `questions`(`content`, `a`, `b`, `c`, `d`, `answer`, `category`) VALUES ('{str(content)}','{str(a)}','{str(b)}','{str(c)}','{str(d)}','{str(answer)}','{str(category)}');")
     mydb.commit()
 
 def import_file(file):
@@ -37,18 +37,18 @@ def import_file(file):
             break
 
     for i in range(count):
-        if str(df['answer'][i]) == "1":
+        if str(df['answer'][i]) == str(df['a'][i]):
             answer = "a"
-        elif str(df['answer'][i]) == "2":
+        elif str(df['answer'][i]) == str(df['b'][i]):
             answer = "b"
-        elif str(df['answer'][i]) == "3":
+        elif str(df['answer'][i]) == str(df['c'][i]):
             answer = "c"
-        elif str(df['answer'][i]) == "4":
+        elif str(df['answer'][i]) == str(df['d'][i]):
             answer = "d"
 
-        insert_question(str(df['content'][i]).replace('"',"").replace("'",""), str(df['a'][i]).replace('"',"").replace("'",""), 
-                        str(df['b'][i]).replace('"',"").replace("'",""), str(df['c'][i]).replace('"',"").replace("'",""), 
-                        str(df['d'][i]).replace('"',"").replace("'",""), answer, df['category'][i])
+        insert_question(str(df['content'][i]).replace("'", "\\'"), str(df['a'][i]).replace("'", "\\'"), 
+                        str(df['b'][i]).replace("'", "\\'"), str(df['c'][i]).replace("'", "\\'"), 
+                        str(df['d'][i]).replace("'", "\\'"), answer, df['category'][i])
 
 def export_file(file):
     workbook = xlsxwriter.Workbook(f'{file}')
@@ -90,13 +90,40 @@ def export_file(file):
 
 # ALTER TABLE table_name AUTO_INCREMENT = value;
 # reset inc value ( value == next value of inc )
+def test(file):
+    data = pd.read_excel(fr'{file}')
+    df = pd.DataFrame(data, columns=['content', 'a', 'b', 'c', 'd', 'answer', 'category'])
+
+    count = 0
+
+    while True:
+        try:
+            if df['content'][count] != '':
+                count += 1
+        except:
+            break
+
+    for i in range(count):
+        if str(df['answer'][i]) == str(df['a'][i]):
+            answer = "a"
+        elif str(df['answer'][i]) == str(df['b'][i]):
+            answer = "b"
+        elif str(df['answer'][i]) == str(df['c'][i]):
+            answer = "c"
+        elif str(df['answer'][i]) == str(df['d'][i]):
+            answer = "d"
+
+        print(f"Answer is : {answer}")
+
 
 if len(sys.argv) < 3:
     leave()
 else:
     if (sys.argv[1] in commands) and ( ( len(sys.argv[2].split(".")) > 1) and (sys.argv[2].split(".")[1] == "xlsx") ):
-        if(sys.argv[1] == "import"):
+        if sys.argv[1] == "import":
             import_file(sys.argv[2])
+        elif sys.argv[1] == "test":
+            test(sys.argv[2])
         else:
             export_file(sys.argv[2])
     else:

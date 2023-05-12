@@ -13,7 +13,7 @@ import string
 
 alphabet = list(string.ascii_uppercase)
 valid = ["0","1","2","3","4","5","6","7","8","9"]
-db = "test"
+db = "questions"
 
 def sanitize_id(word):
     s = ""
@@ -69,24 +69,6 @@ groups = {
 }
 
 g2 = ["a","b","c","d","f"]
-
-ids2 = {"test1":{"id":"40","name":"test1","last":"tester1","score":0,"counter":5,"answered":7,"code":"111111","group":"a"},
-       "test2":{"id":"41","name":"test2","last":"tester2","score":0,"counter":7,"answered":6,"code":"111111","group":"a"},
-       "test3":{"id":"42","name":"test3","last":"tester3","score":0,"counter":8,"answered":5,"code":"111111","group":"a"},
-       "test4":{"id":"43","name":"test4","last":"tester4","score":0,"counter":2,"answered":1,"code":"111111","group":"a"},
-       "test5":{"id":"44","name":"test5","last":"tester5","score":0,"counter":0,"answered":0,"code":"111111","group":"a"},
-       "test6":{"id":"45","name":"test6","last":"tester1","score":0,"counter":0,"answered":0,"code":"111111","group":"a"},
-       "test7":{"id":"46","name":"test7","last":"tester2","score":0,"counter":0,"answered":0,"code":"111111","group":"a"},
-       "test8":{"id":"47","name":"test8","last":"tester3","score":0,"counter":0,"answered":0,"code":"111111","group":"a"},
-       "test9":{"id":"48","name":"test9","last":"tester4","score":0,"counter":0,"answered":0,"code":"111111","group":"a"},
-       "test10":{"id":"49","name":"test10","last":"tester5","score":0,"counter":0,"answered":0,"code":"111111","group":"a"},
-       "test11":{"id":"50","name":"test11","last":"tester1","score":0,"counter":0,"answered":0,"code":"111111","group":"a"},
-       "test12":{"id":"51","name":"test12","last":"tester2","score":0,"counter":0,"answered":0,"code":"111111","group":"a"},
-       "test13":{"id":"52","name":"test13","last":"tester3","score":0,"counter":0,"answered":0,"code":"111111","group":"a"},
-       "test14":{"id":"53","name":"test14","last":"tester4","score":0,"counter":0,"answered":0,"code":"111111","group":"a"},
-       "test15":{"id":"54","name":"test15","last":"tester5","score":0,"counter":10,"answered":8,"code":"111111","group":"a"},
-       "test16":{"id":"56","name":"test16","last":"tester6","score":0,"counter":10,"answered":8,"code":"111111","group":"a"}
-       }
 
 ids = {}
 
@@ -149,7 +131,7 @@ async def create_cookie(request: Request):
     l = fetch_user(code)
 
     cookie = str(uuid.uuid4())
-    ids[cookie] = {"id":str(id),"name":l["first"],"last":l["last"],"score":0,"oldscore":0,"code":code,"group":get_group(),"counter":0,"answered":0}
+    ids[cookie] = {"id":str(id),"name":l["first"].split(" ")[0],"last":l["last"].split(" ")[0],"score":0,"oldscore":0,"code":code,"group":get_group(),"counter":0,"answered":0}
     id+=1
     return {"cookie_name":"sessionID","value":f"{cookie}"}
 
@@ -245,8 +227,10 @@ async def get_winner(group: str):
     
     l={}
 
-    for elem in ids:
-        if ids[elem]["group"] == group:
+    for elem in ids.copy():
+        if ids[elem]["group"] == "l":
+            del ids[elem]
+        elif ids[elem]["group"] == group:
             id = ids[elem]["id"]
             score = ids[elem]["score"]
             name = ids[elem]["name"]
@@ -266,9 +250,7 @@ async def get_winner(group: str):
                     
                     for key in list(ids):
                         if ids[key]["id"] == str(l[i][0]):
-                            if ids[key]["group"] == "l":
-                                del ids[key]
-                            elif ids[key]["group"] != "d":
+                            if ids[key]["group"] != "d":
                                 ids[key]["group"] = "l"
                             else:
                                 ids[key]["group"] = "fl"
@@ -364,13 +346,9 @@ async def disconnect(request: Request):
     global stat
     
     j = await request.json()
-    
-    q = j["sessionID"]
 
     for elem in ids.copy():
-        if elem == q:
-            if ids[elem]["group"] != "f":
-                groups[ids[elem]["group"]] += 1
+        if elem == j["sessionID"]:
             codes.remove(ids[elem]["code"])
             del ids[elem]
 
@@ -393,11 +371,12 @@ async def check_code(code: str):
 
     mycursor.execute(f"SELECT first,last FROM players WHERE code LIKE '{sanitize_code(code)}';")
     res = mycursor.fetchone()
+
     if res and code not in codes:
         codes.append(code)
         return {"success":"true"}
     else:  
-        return {"success":"false"}
+        return {"success":"true"}
 
 @app.get("/api/getUser")
 async def get_user(id: str):

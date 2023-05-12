@@ -1,4 +1,4 @@
-var domain= '192.168.11.106';
+var domain= '10.214.15.20';
 var ws;
 
 function sleep (time) {
@@ -150,6 +150,7 @@ async function update_profile(a,a1,b,c)
 
     document.getElementById("name").innerText = `Name: ${a} ${a1}`;
 
+    /*
     if(b=="d")
     {
         document.getElementById("group").innerText = `Rank: Top 5`;
@@ -166,6 +167,7 @@ async function update_profile(a,a1,b,c)
     {
         document.getElementById("group").innerText = `Rank: Top 60-80`;
     }
+    */
         
     document.getElementById("score").innerText = `Score: ${c}`;
 
@@ -280,6 +282,7 @@ function connect_all()
 
     ws.addEventListener('close', async function () {
         await update_m2("Disconnected, please return to main menu and try again");
+        disconnect();
         await sleep(500);
     });
 
@@ -326,9 +329,9 @@ function connect_all()
                         else if(g == "l")
                         {
                             await update_m2("You lost!");
-                            //await sleep(10000);
-                            //disconnect();
-                            //window.location.reload();
+                            await sleep(5000);
+                            disconnect();
+                            window.location.reload();
                         }
                     }
                 }
@@ -353,9 +356,9 @@ function connect_all()
                         {
                             await update_m2("Lost final!");
 			                group="fl";
-                            //await sleep(10000);
-                            //disconnect();
-                            //window.location.reload();
+                            await sleep(5000);
+                            disconnect();
+                            window.location.reload();
                         }
                         else
                         {
@@ -503,7 +506,7 @@ function get_question()
 
     xhr.onload = async function() {
         const obj = JSON.parse(xhr.responseText);
-        update_alert(`Question ${question} : ${obj.content}`);
+        update_alert(`${obj.content}`);
         await sleep(1000);
         spawn_buttons(obj.a,obj.b,obj.c,obj.d);
         document.getElementById("t").innerText = `10`;
@@ -527,6 +530,14 @@ async function reset()
     window.location.reload();
 }
 
+function deleteAllCookies() {
+    var cs = document.cookie.split(';');
+
+    for (var i = 0; i < cs.length; i++) {
+       document.cookie = cs[i] + "=; expires="+ new Date(0).toUTCString();
+    }
+}
+
 async function disconnect()
 {
     if (ws.readyState !== WebSocket.CLOSED) {
@@ -534,6 +545,7 @@ async function disconnect()
         const value = ('; '+document.cookie).split(`; sessionID=`).pop().split(';')[0];
         xhr.open("POST", `http://${domain}:8000/api/disconnect`, true);
         xhr.send(`{"sessionID":"${value}"}`);
+        deleteAllCookies();
         ws.close();
         await sleep(1000);
     }
@@ -555,8 +567,22 @@ window.addEventListener("resize", (e) => {
 });
 
 document.addEventListener('focusout', function(e){
-    window.scrollBy(0, -200);
+    window.scrollBy(0, -400);
 });
+
+window.onbeforeunload = confirmExit;
+function confirmExit()
+{
+    disconnect();
+    return false;
+}
+
+if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
+  if(document.cookie.indexOf('sessionID=') != -1)
+  {
+    disconnect();
+  }
+} 
 
 /*
 update_alert(`Question 120 :  les deux Clubs de football qui sont qualifiés pour jouer le match final  de la coupe du trône pour la saison sportive 2016-2017 sont le Club RCA et le Club DHJ. Combien de fois ces deux Club  se sont rencontrés pour la même occasion?

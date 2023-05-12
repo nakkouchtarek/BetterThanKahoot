@@ -100,9 +100,9 @@ def export_file(file):
 
     for res in mycursor.fetchall():
 
-        worksheet.write(row, col, res[2])
-        worksheet.write(row, col+1, res[3])
-        worksheet.write(row, col+2, res[4])
+        worksheet.write(row, col, res[1])
+        worksheet.write(row, col+1, res[2])
+        worksheet.write(row, col+2, res[3])
 
         col = 0
         row += 1

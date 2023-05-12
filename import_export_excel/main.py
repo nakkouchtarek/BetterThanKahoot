@@ -37,7 +37,7 @@ def import_file(file):
             break
 
     for i in range(count):
-        insert_question(df['content'][i].replace('"',"").replace("'",""), df['a'][i], df['b'][i], df['c'][i], df['d'][i], df['answer'][i], df['category'][i])
+        insert_question(df['content'][i].replace("'", "\\'"), df['a'][i], df['b'][i], df['c'][i], df['d'][i], df['answer'][i], df['category'][i])
         
 
 def export_file(file):

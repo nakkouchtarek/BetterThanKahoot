@@ -12,12 +12,12 @@ ready=False
 sent=False
 answered=True
 index = 0
-question_per_round = 1
-final_q = 1
+question_per_round = 10
 GROUPS = ["a","b","c","d"]
 domain=sys.argv[1]
 questions = []
-db = "test"
+db = "questions"
+next = "0"
 
 mydb = mysql.connector.connect(host="localhost",user="root",password="")
 
@@ -44,16 +44,21 @@ def add_question(r):
     for elem in mycursor.fetchall():
         l.append(str(elem[0]))
 
-    print("Questions: "+str(l))
+    #print("Questions in db: "+str(l))
 
     while i<r:
         elem = str(random.choice(l))
 
         if elem not in questions:
-            print(f"Added question {elem}")
             q.put(elem)
             questions.append(elem)
             i+=1
+
+    print("Questions in queue: ", end="")
+    print(list(q.queue))
+    #print("Already done: ", end="")
+    #print(questions)
+
 
 def reset():
     global WORD
@@ -89,9 +94,9 @@ def reset():
 def start_timer():
     global sent
     global answered
-    
+    print("Start timer")
     requests.get(f"http://{domain}:8000/api/startTimer")
-    print("FInished timwer")
+    print("\nFinished timer")
     sent=False
     answered=True
 
@@ -106,13 +111,22 @@ def input_loop():
     global question_per_round
     global GROUPS
     global answered
+    global next
 
     while True:
-        time.sleep(2)
-        print("0: Ready\n1: Send question / Get winners \n2:Show board\n4: Reset\n5: Start")
+        time.sleep(5)
+        print("*: Next\n2:Show board")
         c=input(">> ")
 
-        if c == "0" and not ready:
+        if index == 4:
+            index = 0
+
+        if c == "2":
+
+            basic["command"] = "board"
+            WORD=str(basic)
+
+        elif next == "0" and not ready:
 
                 basic["command"] = "ready"
                 basic["group"] = GROUPS[index]
@@ -124,17 +138,11 @@ def input_loop():
 
                 ready=True
                 answered=True
-
-        elif c == "4":
-            reset()
-
-            basic["command"] = "reset"
-            basic["count"] = len(CLIENTS)
-            WORD=str(basic)
+                next = "1"
 
         else:
             if ready:
-                if c == "1" and answered:
+                if next == "1" and answered:
                     if not q.empty():
 
                         basic["command"] = "go"
@@ -145,7 +153,7 @@ def input_loop():
                         print(f"Sent question to group {GROUPS[index]}")
                         sent=True
                         answered=False
-
+                        next = "5"
                     else:
                         try:
 
@@ -155,11 +163,12 @@ def input_loop():
                             
                             if (len(w) > 30 and GROUPS[index] == "a") or (len(w) > 15 and GROUPS[index] == "b") or (len(w) > 5 and GROUPS[index] == "c") or (len(w) > 1 and GROUPS[index] == "d"):
                                 print("More questions!!")
-                                add_question(question_per_round)
+                                add_question(1)
 
                                 basic["command"] = "equal"
                                 WORD = str(basic)
                                 ready=True
+                                next = "1"
 
                             else:
 
@@ -175,20 +184,17 @@ def input_loop():
 
                                 ready=False
                                 index += 1
+                                next = "0"
 
                         except:
 
                             print("Empty group")
                             ready=False
                             index += 1
-
-                elif c == "2":
-                    
-                    basic["command"] = "board"
-                    WORD=str(basic)
+                            next = "0"
 
 
-                elif c == "5" and not answered:
+                elif next == "5" and not answered:
 
                     if not sent:
                         print("Question not sent!")
@@ -199,6 +205,7 @@ def input_loop():
 
                         time.sleep(1)
                         threading.Thread(target=start_timer).start()
+                        next = "1"
 
                 else:
                     print("Not ready!")
@@ -246,10 +253,8 @@ async def handler(websocket):
 
 async def full():
     while True:
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(1)
         await broadcast(WORD)
-
-
 
 async def main():
     async with websockets.serve(handler, domain, 5555):

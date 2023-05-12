@@ -1,4 +1,4 @@
-var domain='192.168.11.106';
+var domain='10.214.15.20';
 const ws = new WebSocket(`ws://${domain}:5555`);
 var keyword = "b0657d3289bae5be59176613e794ae1bf696c7e2ee529058760fe0b17b0d448f";
 
@@ -157,13 +157,15 @@ function sleep (time) {
 
 async function start_timer()
 {
+    
+    var max = 10;
+    document.getElementById("timer").style.backgroundColor = "lime";
+
+
     timer_audio.currentTime=0;
     end_audio.currentTime=0;
     
     timer_audio.play();
-
-    var max = 10;
-    document.getElementById("timer").style.backgroundColor = "lime";
 
     for (let step = 0; step < max; step++) 
     {
@@ -296,7 +298,7 @@ function get_question()
 
     xhr.onload = async function() {
         const obj = JSON.parse(xhr.responseText);
-        update_alert(`Question ${question} : ${obj.content}`);
+        update_alert(`${obj.content}`);
         await sleep(1000);
         spawn_buttons(obj.a,obj.b,obj.c,obj.d);
         document.getElementById("t").innerText = `10`;
@@ -461,9 +463,12 @@ function show_board_tmp()
 
             var name = values[0];
             var last = values[1];
+            var g = values[3];
 
-            document.getElementById(`group`).innerHTML += `<h3 class="item">${name} ${last}</h3>`;
-
+            if(g==groups[index])
+            {
+                document.getElementById(`group`).innerHTML += `<h3 class="item">${name} ${last}</h3>`;
+            }
         }
 
         await sleep(500);
@@ -565,7 +570,8 @@ function show_board_final()
             await sleep(1000);
             document.getElementById(`winner`).innerText = `${winner}`;
             document.getElementById(`winner`).style.opacity = `1`;
-            document.getElementById(`winner`).style.scale = `2`;
+            document.getElementById(`winner`).style.scale = `2.5`;
+            document.getElementById(`group`).style.display = `none`;
             
         }
         else
@@ -687,7 +693,7 @@ async function show_stats()
             {
                 await sleep(500);
                 document.getElementById(`group`).style.opacity = "1";
-                await sleep(3000);
+                await sleep(10000);
 
                 document.getElementById(`group`).style.opacity = "0";
                 await sleep(500);
@@ -722,7 +728,7 @@ async function show_stats()
         }
 
         document.getElementById(`group`).style.opacity = "1";
-        await sleep(1000);
+        await sleep(10000);
 
         await show_board();
     }
