@@ -1,4 +1,4 @@
-var domain= '10.214.15.20';
+var domain= 'localhost';
 var ws;
 
 function sleep (time) {
