@@ -22,7 +22,7 @@ Also make sure you have python and pip installed.<br/>
 
 If you're having external managed environement problem, you could make a virtual environement to run this from :<br/>
 
-https://www.freecodecamp.org/news/how-to-setup-virtual-environments-in-python/<br/><br/>
+https://www.freecodecamp.org/news/how-to-setup-virtual-environments-in-python/<br/>
 
 Or just use the virtual environement folder I have set up with all the packages needed, except for pybluez. <br/>
 
@@ -38,7 +38,7 @@ git clone https://github.com/nakkouchtarek/BetterThanKahoot.git
 cd BetterThanKahoot/
 ```
 
-Change the variable domain to your domain name / IP in script.js of each of the game and spectator folders<br/>
+Change the variable domain to your `domain` name / IP in script.js of each of the game and spectator folders<br/>
 Copy the /game and /spectator folders to htdocs folder in xampp or your apache folder.
 
 ```
