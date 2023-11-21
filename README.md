@@ -63,7 +63,9 @@ If you don't want to install the packages or want to use a virtual env, you can 
 source ./env/bin/activate
 ```
 
-Each of the API and Socket scripts will require a terminal of their own
+Each of the API and Socket scripts will require a terminal of their own, if you're using env you should enable it on each of these <br/>
+
+Launch MySQL and Apache.
 
 Start API
 
