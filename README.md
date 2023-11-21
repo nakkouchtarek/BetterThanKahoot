@@ -1,4 +1,4 @@
-# TriviaGame
+# BetterThanKahoot
 
 This is a custom version of Kahoot, written from scratch with vanilla Javascript.
 <br/>
