@@ -31,6 +31,13 @@ if you want to use bluetooth, install python package pybluez and change the sock
 
 Create a database called `quiz` and import the quiz.sql in ./databases/quiz.sql<br/>
 
+Clone the repository and cd into it
+
+```
+git clone https://github.com/nakkouchtarek/BetterThanKahoot.git
+cd BetterThanKahoot/
+```
+
 Change the variable domain to your domain name / IP in script.js of each of the game and spectator folders<br/>
 Copy the /game and /spectator folders to htdocs folder in xampp or your apache folder.
 
