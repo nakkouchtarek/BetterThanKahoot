@@ -6,7 +6,7 @@ This project uses a lot of technologies : <br/>
 * FastAPI
 * WebSockets and Python sockets
 * HTML, CSS and JS
-* Python Bluetooth
+* Python
 <br/>
 
 The project could have been done using prebuilt technologies, but I wanted to test what I can make using the most basic of tools.<br/>
@@ -24,8 +24,6 @@ If you're having external managed environement problem, you could make a virtual
 
 https://www.freecodecamp.org/news/how-to-setup-virtual-environments-in-python/<br/>
 
-Or just use the virtual environement folder I have set up with all the packages needed, except for pybluez. <br/>
-
 There are 2 socket programs, one with bluetooth and the other based on keyboard input through a terminal, <br/>
 if you want to use bluetooth, install python package pybluez and change the socket.sh script to server_full.py instead of server_test.py<br/>
 
@@ -38,29 +36,23 @@ git clone https://github.com/nakkouchtarek/BetterThanKahoot.git
 cd BetterThanKahoot/
 ```
 
-Change the variable domain to your `domain` name / IP in script.js of each of the game and spectator folders<br/>
-Copy the /game and /spectator folders to htdocs folder in xampp or your apache folder.
+Change the variable domain to your `domain` name / IP in `script.js` of each of the `game` and `spectator` folders<br/>
+Copy the /game and /spectator folders to `htdocs` folder in xampp or your apache folder where you put your web files.
 
 ```
 sudo cp -r ./{game,spectator} /opt/lampp/htdocs/
+```
+
+Install python packages that are needed
+
+```
+pip install -r requirements.txt
 ```
 
 Give execution permission to scripts
 
 ```
 chmod +x ./Linux/*
-```
-
-Without Virtual Environement : Install python packages that are needed
-
-```
-./Linux/./setup.sh
-```
-
-With Virtual Environement : If you don't want to install the packages or want to use a virtual env, you can just enable the one I put in directly and proceed
-
-```
-source ./env/bin/activate
 ```
 
 Each of the API and Socket scripts will require a terminal of their own, if you're using env you should enable it on each of these <br/>
