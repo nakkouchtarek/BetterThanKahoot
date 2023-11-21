@@ -51,13 +51,13 @@ Give execution permission to scripts
 chmod +x ./Linux/*
 ```
 
-Install python packages that are needed
+Without Virtual Environement : Install python packages that are needed
 
 ```
 ./Linux/./setup.sh
 ```
 
-If you don't want to install the packages or want to use a virtual env, you can just enable the one I put in directly and proceed
+With Virtual Environement : If you don't want to install the packages or want to use a virtual env, you can just enable the one I put in directly and proceed
 
 ```
 source ./env/bin/activate
