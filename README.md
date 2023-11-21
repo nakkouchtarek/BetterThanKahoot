@@ -24,6 +24,8 @@ If you're having external managed environement problem, you could make a virtual
 
 https://www.freecodecamp.org/news/how-to-setup-virtual-environments-in-python/<br/><br/>
 
+Or just use the virtual environement folder I have set up with all the packages needed, except for pybluez. <br/>
+
 There are 2 socket programs, one with bluetooth and the other based on keyboard input through a terminal, <br/>
 if you want to use bluetooth, install python package pybluez and change the socket.sh script to server_full.py instead of server_test.py<br/>
 
@@ -46,6 +48,12 @@ Install python packages that are needed
 
 ```
 ./Linux/./setup.sh
+```
+
+If you don't want to install the packages or want to use a virtual env, you can just enable the one I put in directly and proceed
+
+```
+source ./env/bin/activate
 ```
 
 Each of the API and Socket scripts will require a terminal of their own
